@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "neos/neos": "~4.2 || dev-master"
+        "neos/flow": "*"
     },
     "autoload": {
         "psr-4": {
