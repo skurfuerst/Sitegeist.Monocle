@@ -16,118 +16,132 @@ namespace Sitegeist\Monocle\Fusion;
 use Neos\Flow\Annotations as Flow;
 use \Neos\Neos\Domain\Service\FusionService as NeosFusionService;
 
-/**
- * Class FusionService
- * @package Sitegeist\Monocle\Fusion
- */
-class FusionService extends NeosFusionService
-{
-    const RENDERPATH_DISCRIMINATOR = 'monoclePrototypeRenderer_';
+
+
+try {
+    class_exists("Neos\Neos\Domain\Service\FusionService");
+
 
     /**
-     * @Flow\InjectConfiguration(path="fusion.autoInclude", package="Neos.Neos")
-     * @var array
+     * Class FusionService
+     * @package Sitegeist\Monocle\Fusion
      */
-    protected $autoIncludeConfiguration = array();
-
-    /**
-     * Returns a merged fusion object tree in the context of the given site-package
-     *
-     * @param string $siteResourcesPackageKey
-     * @return array The merged object tree as of the given node
-     * @throws \Neos\Neos\Domain\Exception
-     * @deprecated
-     */
-    public function getMergedTypoScriptObjectTreeForSitePackage($siteResourcesPackageKey)
+    class FusionService extends NeosFusionService
     {
-        return $this->getMergedFusionObjectTreeForSitePackage($siteResourcesPackageKey);
-    }
+        const RENDERPATH_DISCRIMINATOR = 'monoclePrototypeRenderer_';
 
-    /**
-     * Returns a merged fusion object tree in the context of the given site-package
-     *
-     * @param string $siteResourcesPackageKey
-     * @return array The merged object tree as of the given node
-     * @throws \Neos\Neos\Domain\Exception
-     */
-    public function getMergedFusionObjectTreeForSitePackage($siteResourcesPackageKey)
-    {
-        $siteRootFusionPathAndFilename = sprintf($this->siteRootFusionPattern, $siteResourcesPackageKey);
+        /**
+         * @Flow\InjectConfiguration(path="fusion.autoInclude", package="Neos.Neos")
+         * @var array
+         */
+        protected $autoIncludeConfiguration = array();
 
-        $mergedFusionCode = '';
-        $mergedFusionCode .= $this->generateNodeTypeDefinitions();
-        $mergedFusionCode .= $this->getFusionIncludes($this->prepareAutoIncludeFusion());
-        $mergedFusionCode .= $this->getFusionIncludes($this->prependFusionIncludes);
-        $mergedFusionCode .= $this->readExternalFusionFile($siteRootFusionPathAndFilename);
-        $mergedFusionCode .= $this->getFusionIncludes($this->appendFusionIncludes);
-
-        return $this->fusionParser->parse($mergedFusionCode, $siteRootFusionPathAndFilename);
-    }
-
-
-    /**
-     * Get all styleguide objects for the given fusion-ast
-     *
-     * @param array $fusionAst
-     * @return array
-     */
-    public function getStyleguideObjectsFromFusionAst($fusionAst)
-    {
-        $styleguideObjects = [];
-        if ($fusionAst && $fusionAst['__prototypes']) {
-            foreach ($fusionAst['__prototypes'] as $prototypeFullName => $prototypeObject) {
-                if (array_key_exists('__meta', $prototypeObject) && is_array($prototypeObject['__meta']) && array_key_exists('styleguide', $prototypeObject['__meta'])) {
-                    list($prototypeVendor, $prototypeName) = explode(':', $prototypeFullName, 2);
-                    $styleguideConfiguration = $prototypeObject['__meta']['styleguide'];
-                    $styleguideObjects[$prototypeFullName] = [
-                        'title' => (isset($styleguideConfiguration['title'])) ? $styleguideConfiguration['title'] : implode(' ', array_reverse(explode('.', $prototypeName))),
-                        'path' => (isset($styleguideConfiguration['path'])) ? $styleguideConfiguration['path'] : $prototypeName,
-                        'description' => (isset($styleguideConfiguration['description'])) ? $styleguideConfiguration['description'] :  '',
-                        'options' => (isset($styleguideConfiguration['options'])) ? $styleguideConfiguration['options'] : null,
-                    ];
-                }
-            }
-        }
-        return $styleguideObjects;
-    }
-
-    /**
-     * Get anatomical prototype tree from fusion AST excerpt
-     *
-     * @param array $fusionAstExcerpt
-     * @return array
-     */
-    public function getAnatomicalPrototypeTreeFromAstExcerpt($fusionAstExcerpt)
-    {
-        $result = [];
-
-        if (!is_array($fusionAstExcerpt)) {
-            return $result;
+        /**
+         * Returns a merged fusion object tree in the context of the given site-package
+         *
+         * @param string $siteResourcesPackageKey
+         * @return array The merged object tree as of the given node
+         * @throws \Neos\Neos\Domain\Exception
+         * @deprecated
+         */
+        public function getMergedTypoScriptObjectTreeForSitePackage($siteResourcesPackageKey)
+        {
+            return $this->getMergedFusionObjectTreeForSitePackage($siteResourcesPackageKey);
         }
 
-        foreach ($fusionAstExcerpt as $key => $value) {
-            if (substr($key, 0, 2) === '__') {
-                continue;
+        /**
+         * Returns a merged fusion object tree in the context of the given site-package
+         *
+         * @param string $siteResourcesPackageKey
+         * @return array The merged object tree as of the given node
+         * @throws \Neos\Neos\Domain\Exception
+         */
+        public function getMergedFusionObjectTreeForSitePackage($siteResourcesPackageKey)
+        {
+            $siteRootFusionPathAndFilename = sprintf($this->siteRootFusionPattern, $siteResourcesPackageKey);
+
+            $mergedFusionCode = '';
+            $mergedFusionCode .= $this->generateNodeTypeDefinitions();
+            $mergedFusionCode .= $this->getFusionIncludes($this->prepareAutoIncludeFusion());
+            $mergedFusionCode .= $this->getFusionIncludes($this->prependFusionIncludes);
+            $mergedFusionCode .= $this->readExternalFusionFile($siteRootFusionPathAndFilename);
+            $mergedFusionCode .= $this->getFusionIncludes($this->appendFusionIncludes);
+
+            return $this->fusionParser->parse($mergedFusionCode, $siteRootFusionPathAndFilename);
+        }
+
+
+        /**
+         * Get all styleguide objects for the given fusion-ast
+         *
+         * @param array $fusionAst
+         * @return array
+         */
+        public function getStyleguideObjectsFromFusionAst($fusionAst)
+        {
+            $styleguideObjects = [];
+            if ($fusionAst && $fusionAst['__prototypes']) {
+                foreach ($fusionAst['__prototypes'] as $prototypeFullName => $prototypeObject) {
+                    if (array_key_exists('__meta', $prototypeObject) && is_array($prototypeObject['__meta']) && array_key_exists('styleguide', $prototypeObject['__meta'])) {
+                        list($prototypeVendor, $prototypeName) = explode(':', $prototypeFullName, 2);
+                        $styleguideConfiguration = $prototypeObject['__meta']['styleguide'];
+                        $styleguideObjects[$prototypeFullName] = [
+                            'title' => (isset($styleguideConfiguration['title'])) ? $styleguideConfiguration['title'] : implode(' ', array_reverse(explode('.', $prototypeName))),
+                            'path' => (isset($styleguideConfiguration['path'])) ? $styleguideConfiguration['path'] : $prototypeName,
+                            'description' => (isset($styleguideConfiguration['description'])) ? $styleguideConfiguration['description'] :  '',
+                            'options' => (isset($styleguideConfiguration['options'])) ? $styleguideConfiguration['options'] : null,
+                        ];
+                    }
+                }
+            }
+            return $styleguideObjects;
+        }
+
+        /**
+         * Get anatomical prototype tree from fusion AST excerpt
+         *
+         * @param array $fusionAstExcerpt
+         * @return array
+         */
+        public function getAnatomicalPrototypeTreeFromAstExcerpt($fusionAstExcerpt)
+        {
+            $result = [];
+
+            if (!is_array($fusionAstExcerpt)) {
+                return $result;
             }
 
-            $anatomy = $this->getAnatomicalPrototypeTreeFromAstExcerpt($value);
-
-            if (array_key_exists('prototypeName', $anatomy)) {
-                if ($anatomy['prototypeName'] !== null) {
-                    $result[] = $anatomy;
+            foreach ($fusionAstExcerpt as $key => $value) {
+                if (substr($key, 0, 2) === '__') {
+                    continue;
                 }
+
+                $anatomy = $this->getAnatomicalPrototypeTreeFromAstExcerpt($value);
+
+                if (array_key_exists('prototypeName', $anatomy)) {
+                    if ($anatomy['prototypeName'] !== null) {
+                        $result[] = $anatomy;
+                    }
+                } else {
+                    $result = array_merge($result, $anatomy);
+                }
+            }
+
+            if (!array_key_exists('__objectType', $fusionAstExcerpt)) {
+                return $result;
             } else {
-                $result = array_merge($result, $anatomy);
+                return [
+                    'prototypeName' => $fusionAstExcerpt['__objectType'],
+                    'children' => $result
+                ];
             }
         }
+    }
 
-        if (!array_key_exists('__objectType', $fusionAstExcerpt)) {
-            return $result;
-        } else {
-            return [
-                'prototypeName' => $fusionAstExcerpt['__objectType'],
-                'children' => $result
-            ];
-        }
+
+} catch (\Exception $e) {
+    class FusionService {
+
     }
 }
+

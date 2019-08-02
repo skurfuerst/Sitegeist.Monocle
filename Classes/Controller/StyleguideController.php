@@ -14,13 +14,13 @@ namespace Sitegeist\Monocle\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Flow\Mvc\Controller\ActionController;
 
 /**
- * Class StyleguideController
- * @package Sitegeist\Monocle\Controller
+ * NOTE: Technically this is a ModuleController (for Neos); but we do not use any special functionality.
+ * Thus, we can use ActionController here; so this also work in plain Flow.
  */
-class StyleguideController extends AbstractModuleController
+class StyleguideController extends ActionController
 {
 
     /**
